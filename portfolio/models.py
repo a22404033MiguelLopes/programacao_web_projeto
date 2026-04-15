@@ -70,6 +70,10 @@ class TFC(models.Model):
     ano = models.IntegerField()
     orientador = models.CharField(max_length=100)
     ranking = models.CharField(max_length=50, blank=True, null=True)
+    link_pdf = models.URLField(blank=True, null=True)
+    imagem_url = models.URLField(blank=True, null=True)
+    palavras_chave = models.CharField(max_length=300, blank=True, null=True)
+    area = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.titulo
