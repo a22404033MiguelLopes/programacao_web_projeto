@@ -1,70 +1,83 @@
-# Making Of - Projeto de Portfólio Académico (Django)
+# Making Of - Portfólio Académico (Django)
 
-Este documento detalha o processo de conceção, modelação e implementação do meu portfólio. Este projeto foi desenvolvido para a unidade curricular de Programação Web e serve como um diário de bordo das decisões técnicas tomadas.
-
----
-
-## 1. Diário de Bordo e Processo de Decisão
-
-### Fase 1: Análise e Modelação Inicial
-O processo começou com a leitura do enunciado e a identificação das entidades principais. Utilizei papel e caneta para esboçar o Diagrama Entidade-Relação (DER), focando-me na forma como as unidades curriculares (UCs) ligam os projetos às competências.
-
-* **Registo Visual:** As fotos do planeamento inicial encontram-se em `media/makingof/` (`der_papel_v1.jpg` e `der_final.jpg`).
+Diário de bordo do desenvolvimento do meu portfólio para a cadeira de Programação Web.
 
 ---
 
-## 2. Justificações de Modelação
+## Fase 1: Planeamento e Modelação
 
-Abaixo encontram-se as decisões tomadas para cada entidade, justificando a sua estrutura e relações.
+Comecei por ler o enunciado e perceber que entidades ia precisar. Fiz rascunhos em papel para desenhar o Diagrama Entidade-Relação antes de começar a programar, o que me ajudou a visualizar as ligações entre as entidades.
+
+As fotos do planeamento estão guardadas em `media/makingof/`.
+
+---
+
+## Fase 2: Decisões de Modelação
 
 ### Licenciatura
-* **Justificação 1:** Inclusão do atributo `website` para permitir ao utilizador validar o plano de estudos oficial no site da universidade.
-* **Justificação 2:** O campo `logo` foi incluído para garantir que a identidade visual da instituição seja preservada no portfólio.
+- Adicionei o campo `website` para ter o link direto para o site oficial do curso.
+- O campo `logo` permite mostrar a identidade visual da instituição no portfólio.
 
-### Unidades Curriculares (UC)
-* **Justificação 1:** Relação `Many-to-Many` com a entidade **Professor**, pois uma cadeira pode ter vários docentes (Teórica/Prática) e o mesmo docente pode lecionar várias UCs.
-* **Justificação 2:** Atributo `semestre` e `ano_letivo` para permitir uma filtragem e ordenação lógica no frontend.
+### Unidades Curriculares
+- Cada UC pertence a uma Licenciatura (relação Many-to-One).
+- A relação com Professor é Many-to-Many porque uma cadeira pode ter vários docentes e um docente pode dar várias cadeiras.
 
-### Projetos
-* **Justificação 1:** Relação `Many-to-One` com a **UC**. Cada projeto nasce num contexto académico específico, permitindo ao recrutador entender em que cadeira a competência foi adquirida.
-* **Justificação 2:** Campo `github_link` e `video_link` definidos como essenciais para demonstrar transparência de código e o funcionamento real do projeto.
+### Professor
+- Optei por guardar o `email` e o `link_pagina` para facilitar o contacto e a consulta do perfil do docente.
 
 ### Tecnologias
-* **Justificação 1:** Relação `Many-to-Many` com **Projetos**. Um projeto raramente usa apenas uma tecnologia, e esta modelação permite listar todos os projetos feitos em, por exemplo, "Python".
-* **Justificação 2:** Atributo `nivel_interesse` para destacar áreas de especialização e preferência de carreira.
+- Criei uma entidade separada para as tecnologias em vez de usar um simples campo de texto. Assim consigo reutilizá-las em várias entidades (Projetos, TFCs, Competências, Formações) e filtrar projetos por tecnologia.
+- O campo `nivel_interesse` (1 a 5) permite destacar as tecnologias que mais me interessam.
+
+### Projetos
+- Cada projeto está ligado a uma UC (Many-to-One) para mostrar em que contexto académico foi feito.
+- Os campos `github_link` e `video_link` servem para demonstrar o código e o funcionamento real.
 
 ### TFC (Trabalho Final de Curso)
-* **Justificação 1:** Entidade separada de "Projetos" devido à sua maior complexidade e peso académico, incluindo atributos como `orientador`.
-* **Justificação 2:** Atributo `ranking` para destacar trabalhos de excelência ou prémios recebidos.
+- Separei os TFCs dos Projetos normais porque têm mais peso académico e atributos próprios como `orientador` e `ranking`.
 
-### Competências & Formações
-* **Justificação 1:** As **Competências** são alimentadas pelas **Tecnologias** dominadas, criando uma coerência entre o que digo saber e o que os meus projetos provam.
-* **Justificação 2:** As **Formações** incluem datas de início e fim para permitir a geração de uma linha do tempo (timeline) automática.
+### Competências
+- Divididas entre Hard Skills e Soft Skills com níveis (Iniciante a Expert).
+- Ligadas às Tecnologias para manter coerência entre o que digo saber e o que os projetos provam.
 
-### Língua (Entidade Adicional)
-* **Justificação 1:** Decidi incluir esta entidade por ser um fator diferenciador em currículos de TI, permitindo separar as "Hard Skills" técnicas das competências comunicativas.
-* **Justificação 2:** Campo `certificado` (FileField) para prova documental de proficiência.
+### Formações
+- Incluem datas de início e fim para eventualmente criar uma timeline.
+- O campo `certificado` (FileField) permite guardar o comprovativo.
 
-### MakingOf (Entidade Obrigatória)
-* **Justificação 1:** Modelação centralizada para permitir que o processo de desenvolvimento seja parte integrante da base de dados, facilitando a manutenção da página "Making Of".
-* **Justificação 2:** Atributo `uso_ia` para manter o registo de como ferramentas externas auxiliaram na produtividade.
+### Línguas
+- Entidade adicional com níveis do QECR (A1 a C2 + Nativo), relevante para o currículo.
+
+### MakingOf
+- Guarda o registo de cada etapa do desenvolvimento, incluindo erros encontrados e uso de IA.
 
 ---
 
-## 3. Evolução do Modelo e Erros
+## Fase 3: Carregamento de Dados
 
-| Versão | Alteração | Motivo / Erro Corrigido |
+### Dados do Curso (API da Lusófona)
+Usei a API pública da Universidade Lusófona para descarregar os JSONs com a informação do curso LEI e de cada UC. O script `data/descarregar_api.py` faz o download e guarda tudo na pasta `data/files/`.
+
+Depois de explorar a estrutura dos JSONs, vi que existem campos como `objectives`, `programme`, `bibliography` e `methodology`, mas decidi **não adicionar esses campos ao modelo**. A informação essencial da UC (nome, sigla, ECTS e semestre) já está contemplada, e esses campos de texto longo não fazem sentido no contexto de um portfólio pessoal — o foco deve ser nos projetos e competências, não em reproduzir a ficha da cadeira.
+
+O script `data/carregar_curso.py` carrega as UCs para a base de dados usando os JSONs descarregados.
+
+### Dados dos TFCs
+O script `data/carregar_tfcs.py` carrega os Trabalhos Finais de Curso a partir do ficheiro `data/tfcs_final.json`, criando automaticamente as Tecnologias associadas a cada TFC.
+
+---
+
+## Evolução do Modelo
+
+| Versão | O que mudou | Porquê |
 | :--- | :--- | :--- |
-| **v1.0** | Tecnologias como CharField no Projeto | **Erro:** Impossível filtrar ou associar logos a cada tecnologia. |
-| **v1.1** | Criação da Entidade Tecnologia | Permite reutilizar a tecnologia em vários projetos e UCs. |
-| **v1.2** | Relação Professor/UC alterada | De FK para Many-to-Many para permitir múltiplos docentes por UC. |
+| v1.0 | Tecnologias como texto no Projeto | Impossível filtrar ou associar logos |
+| v1.1 | Criação da entidade Tecnologia | Reutilizável em vários modelos |
+| v1.2 | Professor/UC passou a Many-to-Many | Permitir vários docentes por UC |
 
 ---
 
-## 4. Uso de Inteligência Artificial
+## Uso de IA
 
-Neste projeto, utilizei o modelo **Gemini** como assistente de modelação.
-* **Contribuição Positiva:** Auxiliou na estruturação da lógica de relações `Many-to-Many` e na redação técnica das justificações. Ajudou na conversão do raciocínio em papel para o formato `models.py` do Django.
-* **Validação Humana:** Todas as sugestões da IA foram revistas face ao enunciado da Ficha 6, garantindo que os requisitos mínimos de atributos por entidade fossem cumpridos.
+Usei o **Gemini** como assistente durante a modelação. Ajudou-me a estruturar as relações Many-to-Many e a converter o raciocínio que fiz em papel para o `models.py` do Django. Todas as sugestões foram verificadas contra o enunciado da ficha.
 
 ---
