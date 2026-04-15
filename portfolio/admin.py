@@ -11,8 +11,8 @@ class LicenciaturaAdmin(admin.ModelAdmin):
 
 @admin.register(UnidadeCurricular)
 class UnidadeCurricularAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'sigla', 'ects', 'semestre', 'licenciatura')
-    list_filter = ('semestre', 'licenciatura')
+    list_display = ('nome', 'sigla', 'ects', 'semestre', 'ano_letivo', 'licenciatura')
+    list_filter = ('semestre', 'ano_letivo', 'licenciatura')
     search_fields = ('nome', 'sigla')
 
 @admin.register(Professor)
@@ -23,13 +23,13 @@ class ProfessorAdmin(admin.ModelAdmin):
 
 @admin.register(Tecnologia)
 class TecnologiaAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'nivel_interesse')
-    list_filter = ('nivel_interesse',)
+    list_display = ('nome', 'tipo', 'nivel_interesse')
+    list_filter = ('tipo', 'nivel_interesse',)
     search_fields = ('nome',)
 
 @admin.register(Projeto)
 class ProjetoAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'uc', 'ano')
+    list_display = ('titulo', 'uc', 'ano', 'participantes')
     list_filter = ('ano', 'uc')
     search_fields = ('titulo',)
     filter_horizontal = ('tecnologias',)

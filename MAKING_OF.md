@@ -73,6 +73,21 @@ O script `data/carregar_tfcs.py` carrega os Trabalhos Finais de Curso a partir d
 | v1.0 | Tecnologias como texto no Projeto | Impossível filtrar ou associar logos |
 | v1.1 | Criação da entidade Tecnologia | Reutilizável em vários modelos |
 | v1.2 | Professor/UC passou a Many-to-Many | Permitir vários docentes por UC |
+| v1.3 | Adicionado `tipo` à Tecnologia | Ao inserir dados, percebi que "Python" é uma linguagem mas "Django" é um framework — sem esta distinção ficava tudo misturado |
+| v1.4 | Adicionado `ano_letivo` à UC | O semestre sozinho não chega — preciso saber se é o semestre 1 de 2023-2024 ou de 2024-2025 |
+| v1.5 | Adicionado `participantes` ao Projeto | Alguns projetos foram feitos em grupo e faz sentido registar com quem trabalhei |
+
+---
+
+## Fase 4: Carregamento Manual de Dados
+
+Ao tentar inserir os meus dados reais no Django Admin, reparei em algumas limitações do modelo original:
+
+- **Tecnologia sem tipo:** Ao adicionar Python, Django, Git, Bootstrap, etc., ficava tudo numa lista genérica sem distinção. Adicionei o campo `tipo` com categorias (Linguagem, Framework, Ferramenta, Biblioteca, Outro) para organizar melhor.
+- **UC sem ano letivo:** Só tinha o número do semestre, mas isso não me dizia em que ano letivo frequentei a cadeira. Adicionei `ano_letivo` como CharField (ex: "2024-2025").
+- **Projeto sem participantes:** Vários projetos foram feitos em grupo e queria registar isso. Adicionei o campo `participantes`.
+
+Estas alterações surgiram naturalmente ao recolher informação sobre os meus projetos e experiências — é o tipo de coisa que só se percebe quando se tenta usar o modelo com dados reais.
 
 ---
 

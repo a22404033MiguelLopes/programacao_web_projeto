@@ -18,6 +18,7 @@ class UnidadeCurricular(models.Model):
     sigla = models.CharField(max_length=10)
     ects = models.IntegerField()
     semestre = models.IntegerField()
+    ano_letivo = models.CharField(max_length=9, blank=True, null=True)  # NOVO: ex: "2024-2025"
     icone = models.ImageField(upload_to='ucs/', blank=True, null=True)
     link = models.URLField(blank=True, null=True)
 
@@ -37,7 +38,15 @@ class Professor(models.Model):
 
 class Tecnologia(models.Model):
     NIVEL_CHOICES = [(i, str(i)) for i in range(1, 6)]
+    TIPO_CHOICES = [                                        # NOVO
+        ('linguagem', 'Linguagem de Programação'),
+        ('framework', 'Framework'),
+        ('ferramenta', 'Ferramenta'),
+        ('biblioteca', 'Biblioteca'),
+        ('outro', 'Outro'),
+    ]
     nome = models.CharField(max_length=100)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='outro')  # NOVO
     logo = models.ImageField(upload_to='tecnologias/', blank=True, null=True)
     link = models.URLField(blank=True, null=True)
     nivel_interesse = models.IntegerField(choices=NIVEL_CHOICES, default=3)
@@ -53,6 +62,7 @@ class Projeto(models.Model):
     titulo = models.CharField(max_length=200)
     descricao = models.TextField()
     ano = models.IntegerField()
+    participantes = models.CharField(max_length=300, blank=True, null=True)  # NOVO
     github_link = models.URLField(blank=True, null=True)
     video_link = models.URLField(blank=True, null=True)
     imagem = models.ImageField(upload_to='projetos/', blank=True, null=True)
